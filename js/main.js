@@ -109,25 +109,51 @@ function initNav() {
   });
 }
 
-/* ── Project Slider Drag ──────────────────────────────────── */
-function initSliders() {
-  document.querySelectorAll('.project-slider').forEach(slider => {
-    let isDown = false;
-    let startX, scrollLeft;
+/* ── Card Stage (one card at a time, prev/next + swipe) ───── */
+function initCardStages() {
+  document.querySelectorAll('.card-stage').forEach(stage => {
+    const track   = stage.querySelector('.card-stage__track');
+    const cards   = stage.querySelectorAll('.project-card');
+    const btnPrev = stage.querySelector('.card-stage__btn--prev');
+    const btnNext = stage.querySelector('.card-stage__btn--next');
+    const dotsEl  = stage.querySelector('.card-stage__dots');
+    const total   = cards.length;
+    let current   = 0;
 
-    slider.addEventListener('mousedown', e => {
-      isDown = true;
-      startX = e.pageX - slider.offsetLeft;
-      scrollLeft = slider.scrollLeft;
+    if (total <= 1) {
+      btnPrev.style.display = 'none';
+      btnNext.style.display = 'none';
+    }
+
+    // Build dots
+    const dots = Array.from({ length: total }, (_, i) => {
+      const d = document.createElement('span');
+      d.className = 'card-stage__dot' + (i === 0 ? ' card-stage__dot--active' : '');
+      d.addEventListener('click', () => goTo(i));
+      dotsEl.appendChild(d);
+      return d;
     });
-    slider.addEventListener('mouseleave', () => { isDown = false; });
-    slider.addEventListener('mouseup',    () => { isDown = false; });
-    slider.addEventListener('mousemove', e => {
-      if (!isDown) return;
-      e.preventDefault();
-      const x = e.pageX - slider.offsetLeft;
-      slider.scrollLeft = scrollLeft - (x - startX);
-    });
+
+    function goTo(idx) {
+      current = Math.max(0, Math.min(idx, total - 1));
+      track.style.transform = `translateX(-${current * 100}%)`;
+      dots.forEach((d, i) => d.classList.toggle('card-stage__dot--active', i === current));
+      btnPrev.disabled = current === 0;
+      btnNext.disabled = current === total - 1;
+    }
+
+    btnPrev.addEventListener('click', () => goTo(current - 1));
+    btnNext.addEventListener('click', () => goTo(current + 1));
+
+    // Touch swipe
+    let touchStartX = 0;
+    stage.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+    stage.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 40) goTo(dx < 0 ? current + 1 : current - 1);
+    }, { passive: true });
+
+    goTo(0); // init state
   });
 }
 
@@ -179,7 +205,7 @@ function initSkillBars() {
 /* ── Bootstrap ────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   initNav();
-  initSliders();
+  initCardStages();
   initProjectFilter();
   initSkillBars();
 
