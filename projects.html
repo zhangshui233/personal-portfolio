@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>作品集 — 技术美术</title>
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- 导航栏 -->
+  <nav class="nav">
+    <div class="nav__logo">
+      <span class="nav__logo-bracket">[</span>TA<span class="nav__logo-bracket">]</span>
+    </div>
+    <ul class="nav__links">
+      <li><a href="index.html" class="nav__link">首页</a></li>
+      <li><a href="projects.html" class="nav__link nav__link--active">作品集</a></li>
+      <li><a href="about.html" class="nav__link">关于我</a></li>
+    </ul>
+    <button class="nav__toggle" aria-label="展开菜单">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- 页面标题 -->
+  <header class="page-header">
+    <div class="container">
+      <p class="page-header__eyebrow">// 作品</p>
+      <h1 class="page-header__title">作品集</h1>
+      <p class="page-header__desc">智能座舱 3D 资产、产品动画表现与引擎集成作品精选。</p>
+    </div>
+  </header>
+
+  <!-- 筛选栏 -->
+  <section class="filter-bar">
+    <div class="container">
+      <div class="filter-bar__inner">
+        <button class="filter-btn filter-btn--active" data-filter="all">全部</button>
+        <button class="filter-btn" data-filter="hmi">智能座舱</button>
+        <button class="filter-btn" data-filter="animation">产品动画</button>
+        <button class="filter-btn" data-filter="model">模型资产</button>
+        <button class="filter-btn" data-filter="vfx">动效特效</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 项目网格 -->
+  <section class="section projects-grid">
+    <div class="container">
+      <div class="grid grid--2" id="projects-container">
+
+        <article class="card card--large" data-category="hmi model">
+          <div class="card__thumb card__thumb--shader">
+            <img src="images/projects/project1.jpg" alt="享界S9 车机3D显示" loading="lazy" onerror="this.style.display='none'" />
+          </div>
+          <div class="card__body">
+            <div class="card__meta">
+              <span class="card__tag">Unity</span>
+              <span class="card__tag">HMI</span>
+              <span class="card__tag">量产</span>
+            </div>
+            <h3 class="card__title">享界 S9 车机 3D 显示系统</h3>
+            <p class="card__desc">北汽享界 S9 系列量产项目，负责车机显示系统 3D 资产全流程制作与引擎集成。完成高/中/低模拓扑、UV 拆分烘焙，制定命名规范与内存优化方案，提升团队资源复用率 30%。</p>
+            <ul class="card__tech">
+              <li>Unity</li><li>高低模烘焙</li><li>UV拆分</li><li>资源规范</li>
+            </ul>
+            <a href="#" class="btn btn--ghost btn--sm">查看详情 →</a>
+          </div>
+        </article>
+
+        <article class="card card--large" data-category="hmi vfx">
+          <div class="card__thumb card__thumb--vfx">
+            <img src="images/projects/project2.jpg" alt="车辆动效与涂装切换" loading="lazy" onerror="this.style.display='none'" />
+          </div>
+          <div class="card__body">
+            <div class="card__meta">
+              <span class="card__tag">动效</span>
+              <span class="card__tag">HMI</span>
+            </div>
+            <h3 class="card__title">车辆动效 · 涂装切换 · 节庆特效</h3>
+            <p class="card__desc">为广汽铂金7、阿维塔等车型制作在线/离线车辆动画、icon 动效、涂装切换及节庆氛围特效，输出多种方案并落地至车机系统。</p>
+            <ul class="card__tech">
+              <li>AE</li><li>Unity动画</li><li>特效合成</li>
+            </ul>
+            <a href="#" class="btn btn--ghost btn--sm">查看详情 →</a>
+          </div>
+        </article>
+
+        <article class="card card--large" data-category="hmi model">
+          <div class="card__thumb card__thumb--tool">
+            <img src="images/projects/project3.jpg" alt="Unity Shader与光影调整" loading="lazy" onerror="this.style.display='none'" />
+          </div>
+          <div class="card__body">
+            <div class="card__meta">
+              <span class="card__tag">Unity</span>
+              <span class="card__tag">Shader</span>
+            </div>
+            <h3 class="card__title">Unity 引擎内 Shader 与光影调整</h3>
+            <p class="card__desc">在 Unity 中协助调整 Shader 参数、光影渲染、大桌面环境背景，确保上线效果美术质量与性能平衡，覆盖多款量产车型。</p>
+            <ul class="card__tech">
+              <li>Unity</li><li>Shader参数</li><li>光影渲染</li><li>性能优化</li>
+            </ul>
+            <a href="#" class="btn btn--ghost btn--sm">查看详情 →</a>
+          </div>
+        </article>
+
+        <article class="card card--large" data-category="animation vfx">
+          <div class="card__thumb card__thumb--vfx">
+            <img src="images/projects/project4.jpg" alt="产品展示动画" loading="lazy" onerror="this.style.display='none'" />
+          </div>
+          <div class="card__body">
+            <div class="card__meta">
+              <span class="card__tag">C4D</span>
+              <span class="card__tag">Blender</span>
+              <span class="card__tag">AE</span>
+            </div>
+            <h3 class="card__title">产品展示动画制作</h3>
+            <p class="card__desc">为多款产品设计制作展示动画，包括分镜脚本、模型动画、材质灯光渲染及后期合成。某系列动画帮助产品月销量超 3000 件，被公司收录为品牌案例。</p>
+            <ul class="card__tech">
+              <li>C4D</li><li>Blender</li><li>AE</li><li>Premiere</li>
+            </ul>
+            <a href="#" class="btn btn--ghost btn--sm">查看详情 →</a>
+          </div>
+        </article>
+
+        <article class="card card--large" data-category="model">
+          <div class="card__thumb card__thumb--shader">
+            <img src="images/projects/project5.jpg" alt="3D包装大赛获奖作品" loading="lazy" onerror="this.style.display='none'" />
+          </div>
+          <div class="card__body">
+            <div class="card__meta">
+              <span class="card__tag">竞赛</span>
+              <span class="card__tag">二等奖</span>
+            </div>
+            <h3 class="card__title">中国化妆品 3D 包装大赛 · 二等奖</h3>
+            <p class="card__desc">个人独立完成参赛作品，获全国二等奖及最佳人气奖，校内排名第一。体现独立完成高质量 3D 作品的能力。</p>
+            <ul class="card__tech">
+              <li>C4D</li><li>产品建模</li><li>材质渲染</li>
+            </ul>
+            <a href="#" class="btn btn--ghost btn--sm">查看详情 →</a>
+          </div>
+        </article>
+
+        <article class="card card--large" data-category="model animation">
+          <div class="card__thumb card__thumb--tool">
+            <img src="images/projects/project6.jpg" alt="未来出行小组课题" loading="lazy" onerror="this.style.display='none'" />
+          </div>
+          <div class="card__body">
+            <div class="card__meta">
+              <span class="card__tag">课题</span>
+              <span class="card__tag">最高分</span>
+            </div>
+            <h3 class="card__title">未来出行小组课题</h3>
+            <p class="card__desc">获场内外最高分与最佳指导奖，作品留校展示。体现跨学科协作与创新表达能力，融合工业设计与交互体验思维。</p>
+            <ul class="card__tech">
+              <li>Rhino</li><li>Solidworks</li><li>模型制作</li>
+            </ul>
+            <a href="#" class="btn btn--ghost btn--sm">查看详情 →</a>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p class="footer__copy">&copy; 2026 技术美术作品集</p>
+      <div class="footer__links">
+        <a href="#" class="footer__link">GitHub</a>
+        <a href="#" class="footer__link">ArtStation</a>
+        <a href="#" class="footer__link">LinkedIn</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
