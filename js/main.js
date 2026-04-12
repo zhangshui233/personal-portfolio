@@ -109,6 +109,28 @@ function initNav() {
   });
 }
 
+/* ── Project Slider Drag ──────────────────────────────────── */
+function initSliders() {
+  document.querySelectorAll('.project-slider').forEach(slider => {
+    let isDown = false;
+    let startX, scrollLeft;
+
+    slider.addEventListener('mousedown', e => {
+      isDown = true;
+      startX = e.pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+    slider.addEventListener('mouseleave', () => { isDown = false; });
+    slider.addEventListener('mouseup',    () => { isDown = false; });
+    slider.addEventListener('mousemove', e => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - slider.offsetLeft;
+      slider.scrollLeft = scrollLeft - (x - startX);
+    });
+  });
+}
+
 /* ── Project Filter ───────────────────────────────────────── */
 function initProjectFilter() {
   const buttons   = document.querySelectorAll('.filter-btn');
@@ -157,6 +179,7 @@ function initSkillBars() {
 /* ── Bootstrap ────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   initNav();
+  initSliders();
   initProjectFilter();
   initSkillBars();
 
