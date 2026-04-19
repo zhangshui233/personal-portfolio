@@ -162,20 +162,122 @@ function initShaderPreviews() {
   const VS = `attribute vec2 p;void main(){gl_Position=vec4(p,0,1);}`;
 
   const SHADERS = {
-    fresnel: `precision mediump float;
+
+    // ── 3D: Fresnel Sphere (raymarching) ─────────────────────
+    fresnel3d: `precision mediump float;
 uniform float t;uniform vec2 r;
+float map(vec3 p){return length(p)-.38;}
+vec3 norm(vec3 p){float e=.002;return normalize(vec3(
+  map(p+vec3(e,0,0))-map(p-vec3(e,0,0)),
+  map(p+vec3(0,e,0))-map(p-vec3(0,e,0)),
+  map(p+vec3(0,0,e))-map(p-vec3(0,0,e))));}
 void main(){
   vec2 uv=(gl_FragCoord.xy-r*.5)/min(r.x,r.y);
-  float d=length(uv)-.32;
-  float rim=smoothstep(.025,.0,abs(d));
-  float glow=exp(-abs(d)*7.)*.5;
-  float pulse=sin(t*1.8)*.5+.5;
-  vec3 c=vec3(0.,.83,1.)*(rim+glow*(.4+.6*pulse));
-  c+=vec3(.48,.37,.65)*glow*(1.-pulse)*1.5;
-  float ring=exp(-pow((length(uv)-.32)*20.,2.))*.8*pulse;
-  c+=vec3(0.,.83,1.)*ring;
-  gl_FragColor=vec4(c,1.);
-}`,
+  vec3 ro=vec3(0,0,1.8),rd=normalize(vec3(uv,-1.4));
+  float d=0.;vec3 p=ro;bool hit=false;
+  for(int i=0;i<48;i++){p=ro+rd*d;float h=map(p);if(h<.002){hit=true;break;}d+=h;if(d>5.)break;}
+  vec3 col=vec3(.03,.06,.12)+vec3(0.,.83,1.)*exp(-length(uv)*5.)*.04;
+  if(hit){
+    vec3 n=norm(p);
+    vec3 l=normalize(vec3(cos(t*.5),sin(t*.35),.7));
+    float diff=max(dot(n,l),0.);
+    float spec=pow(max(dot(reflect(-l,n),-rd),0.),48.);
+    float fres=pow(1.-abs(dot(n,-rd)),2.5);
+    col =vec3(.02,.05,.1)+vec3(0.,.83,1.)*(diff*.55+spec*.9);
+    col+=vec3(0.,.83,1.)*fres*2.2;
+    col+=vec3(.48,.37,.65)*fres*.9;
+  }
+  gl_FragColor=vec4(col,1.);}`,
+
+    // ── 3D: Rotating Torus (raymarching + Phong) ─────────────
+    torus: `precision mediump float;
+uniform float t;uniform vec2 r;
+mat2 rot(float a){return mat2(cos(a),sin(a),-sin(a),cos(a));}
+float map(vec3 p){
+  p.xz=rot(t*.35)*p.xz;p.xy=rot(t*.2)*p.xy;
+  vec2 q=vec2(length(p.xz)-.44,p.y);
+  return length(q)-.15;}
+vec3 norm(vec3 p){float e=.002;return normalize(vec3(
+  map(p+vec3(e,0,0))-map(p-vec3(e,0,0)),
+  map(p+vec3(0,e,0))-map(p-vec3(0,e,0)),
+  map(p+vec3(0,0,e))-map(p-vec3(0,0,e))));}
+void main(){
+  vec2 uv=(gl_FragCoord.xy-r*.5)/min(r.x,r.y);
+  vec3 ro=vec3(0,0,2.),rd=normalize(vec3(uv,-1.5));
+  float d=0.;vec3 p=ro;bool hit=false;
+  for(int i=0;i<64;i++){p=ro+rd*d;float h=map(p);if(h<.002){hit=true;break;}d+=h;if(d>7.)break;}
+  vec3 col=vec3(.03,.06,.12)+vec3(.48,.37,.65)*exp(-length(uv)*5.)*.05;
+  if(hit){
+    vec3 n=norm(p);
+    vec3 l=normalize(vec3(1.,1.2,.5));
+    float diff=max(dot(n,l),0.);
+    float spec=pow(max(dot(reflect(-l,n),-rd),0.),64.);
+    float fres=pow(1.-abs(dot(n,-rd)),3.);
+    col =vec3(.02,.05,.1)+vec3(0.,.83,1.)*(diff*.6+spec);
+    col+=vec3(0.,.83,1.)*fres*1.8;
+    col+=vec3(.48,.37,.65)*fres*.7;
+  }
+  gl_FragColor=vec4(col,1.);}`,
+
+    // ── 3D: Metaball smooth-blend (SDF smin) ─────────────────
+    metaball: `precision mediump float;
+uniform float t;uniform vec2 r;
+float smin(float a,float b,float k){float h=clamp(.5+.5*(b-a)/k,0.,1.);return mix(b,a,h)-k*h*(1.-h);}
+float map(vec3 p){
+  vec3 a=vec3(cos(t*.65)*.28,sin(t*.5)*.18,0.);
+  vec3 b=vec3(-cos(t*.65)*.28,-sin(t*.5)*.18,0.);
+  return smin(length(p-a)-.22,length(p-b)-.22,.2);}
+vec3 norm(vec3 p){float e=.002;return normalize(vec3(
+  map(p+vec3(e,0,0))-map(p-vec3(e,0,0)),
+  map(p+vec3(0,e,0))-map(p-vec3(0,e,0)),
+  map(p+vec3(0,0,e))-map(p-vec3(0,0,e))));}
+void main(){
+  vec2 uv=(gl_FragCoord.xy-r*.5)/min(r.x,r.y);
+  vec3 ro=vec3(0,0,1.8),rd=normalize(vec3(uv,-1.4));
+  float d=0.;vec3 p=ro;bool hit=false;
+  for(int i=0;i<56;i++){p=ro+rd*d;float h=map(p);if(h<.002){hit=true;break;}d+=h;if(d>6.)break;}
+  vec3 col=vec3(.03,.06,.12)+vec3(.48,.37,.65)*exp(-length(uv)*5.)*.04;
+  if(hit){
+    vec3 n=norm(p);
+    vec3 l=normalize(vec3(.8,1.,.5));
+    float diff=max(dot(n,l),0.);
+    float spec=pow(max(dot(reflect(-l,n),-rd),0.),32.);
+    float fres=pow(1.-abs(dot(n,-rd)),3.);
+    col =vec3(.02,.04,.1)+vec3(0.,.83,1.)*(diff*.5+spec*.7);
+    col+=vec3(0.,.83,1.)*fres*2.;
+    col+=vec3(.48,.37,.65)*fres;
+  }
+  gl_FragColor=vec4(col,1.);}`,
+
+    // ── 3D: Hologram scanline sphere ──────────────────────────
+    hologram: `precision mediump float;
+uniform float t;uniform vec2 r;
+float map(vec3 p){return length(p)-.36;}
+vec3 norm(vec3 p){float e=.002;return normalize(vec3(
+  map(p+vec3(e,0,0))-map(p-vec3(e,0,0)),
+  map(p+vec3(0,e,0))-map(p-vec3(0,e,0)),
+  map(p+vec3(0,0,e))-map(p-vec3(0,0,e))));}
+void main(){
+  vec2 uv=(gl_FragCoord.xy-r*.5)/min(r.x,r.y);
+  vec3 ro=vec3(0,0,1.8),rd=normalize(vec3(uv,-1.4));
+  float d=0.;vec3 p=ro;bool hit=false;
+  for(int i=0;i<48;i++){p=ro+rd*d;float h=map(p);if(h<.002){hit=true;break;}d+=h;if(d>5.)break;}
+  vec3 col=vec3(.02,.05,.1);
+  if(hit){
+    vec3 n=norm(p);
+    float fres=pow(1.-abs(dot(n,-rd)),1.6);
+    float scan=abs(sin((p.y*22.+t*2.5)*3.14159))*.5+.5;
+    scan*=smoothstep(.2,.8,fres);
+    float glitch=step(.97,fract(sin(floor(p.y*28.+floor(t*6.)))*43.))*0.35;
+    col=vec3(0.,.83,1.)*(scan*.65+fres*.9+glitch);
+    col+=vec3(.48,.37,.65)*(1.-fres)*.25;
+    vec2 sg=abs(fract(p.xz*7.)-.5);
+    col+=vec3(0.,.83,1.)*smoothstep(.46,.5,max(sg.x,sg.y))*.18*fres;
+  }
+  col+=vec3(0.,.83,1.)*exp(-length(uv)*5.)*.05;
+  gl_FragColor=vec4(col,1.);}`,
+
+    // ── 2D: FBM noise dissolve ────────────────────────────────
     dissolve: `precision mediump float;
 uniform float t;uniform vec2 r;
 float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5);}
@@ -191,8 +293,9 @@ void main(){
   float rim=smoothstep(.06,.0,abs(nm-th));
   c+=vec3(0.,.83,1.)*rim*4.;
   c+=vec3(.48,.37,.65)*rim*2.;
-  gl_FragColor=vec4(c,1.);
-}`,
+  gl_FragColor=vec4(c,1.);}`,
+
+    // ── 2D: Procedural scan-line grid ─────────────────────────
     grid: `precision mediump float;
 uniform float t;uniform vec2 r;
 void main(){
@@ -207,8 +310,8 @@ void main(){
   c+=vec3(0.,.83,1.)*(s1+s2);
   float cg=exp(-length((uv-vec2(.5,.25))*vec2(1.,1.8))*3.5);
   c+=vec3(.48,.37,.65)*cg*.7;
-  gl_FragColor=vec4(c,1.);
-}`
+  gl_FragColor=vec4(c,1.);}`
+
   };
 
   function compile(gl, type, src) {
