@@ -157,7 +157,110 @@ function initCardStages() {
   });
 }
 
-/* ── Project Filter ───────────────────────────────────────── */
+/* ── WebGL Shader Previews ────────────────────────────────── */
+function initShaderPreviews() {
+  const VS = `attribute vec2 p;void main(){gl_Position=vec4(p,0,1);}`;
+
+  const SHADERS = {
+    fresnel: `precision mediump float;
+uniform float t;uniform vec2 r;
+void main(){
+  vec2 uv=(gl_FragCoord.xy-r*.5)/min(r.x,r.y);
+  float d=length(uv)-.32;
+  float rim=smoothstep(.025,.0,abs(d));
+  float glow=exp(-abs(d)*7.)*.5;
+  float pulse=sin(t*1.8)*.5+.5;
+  vec3 c=vec3(0.,.83,1.)*(rim+glow*(.4+.6*pulse));
+  c+=vec3(.48,.37,.65)*glow*(1.-pulse)*1.5;
+  float ring=exp(-pow((length(uv)-.32)*20.,2.))*.8*pulse;
+  c+=vec3(0.,.83,1.)*ring;
+  gl_FragColor=vec4(c,1.);
+}`,
+    dissolve: `precision mediump float;
+uniform float t;uniform vec2 r;
+float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5);}
+float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+  return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
+float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*n(p);p*=2.1;a*=.5;}return v;}
+void main(){
+  vec2 uv=gl_FragCoord.xy/r;
+  float nm=fbm(uv*3.+t*.25);
+  float th=fract(t*.18);
+  float edge=smoothstep(0.,.06,nm-th);
+  vec3 c=mix(vec3(0.,.04,.1),vec3(0.,.83,1.)*1.2,edge);
+  float rim=smoothstep(.06,.0,abs(nm-th));
+  c+=vec3(0.,.83,1.)*rim*4.;
+  c+=vec3(.48,.37,.65)*rim*2.;
+  gl_FragColor=vec4(c,1.);
+}`,
+    grid: `precision mediump float;
+uniform float t;uniform vec2 r;
+void main(){
+  vec2 uv=gl_FragCoord.xy/r;
+  vec2 g=fract(uv*18.);
+  float line=smoothstep(.93,1.,max(g.x,g.y))*.7;
+  float depth=uv.y*.6+.15;
+  float s1=exp(-pow(abs(uv.y-fract(t*.38))*20.,2.))*1.8;
+  float s2=exp(-pow(abs(uv.y-fract(t*.38+.5))*20.,2.))*.7;
+  vec3 c=vec3(.04,.08,.13);
+  c+=vec3(0.,.83,1.)*line*depth;
+  c+=vec3(0.,.83,1.)*(s1+s2);
+  float cg=exp(-length((uv-vec2(.5,.25))*vec2(1.,1.8))*3.5);
+  c+=vec3(.48,.37,.65)*cg*.7;
+  gl_FragColor=vec4(c,1.);
+}`
+  };
+
+  function compile(gl, type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+
+  document.querySelectorAll('canvas[data-shader]').forEach(canvas => {
+    const fs = SHADERS[canvas.dataset.shader];
+    if (!fs) return;
+    const gl = canvas.getContext('webgl');
+    if (!gl) return;
+
+    const prog = gl.createProgram();
+    gl.attachShader(prog, compile(gl, gl.VERTEX_SHADER, VS));
+    gl.attachShader(prog, compile(gl, gl.FRAGMENT_SHADER, fs));
+    gl.linkProgram(prog);
+    gl.useProgram(prog);
+
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,1,1]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, 'p');
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+    const uT = gl.getUniformLocation(prog, 't');
+    const uR = gl.getUniformLocation(prog, 'r');
+
+    function resize() {
+      const w = canvas.parentElement.clientWidth || 320;
+      const h = canvas.parentElement.clientHeight || 260;
+      canvas.width = w;
+      canvas.height = h;
+      gl.viewport(0, 0, w, h);
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const start = performance.now();
+    (function frame() {
+      gl.uniform1f(uT, (performance.now() - start) / 1000);
+      gl.uniform2f(uR, canvas.width, canvas.height);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      requestAnimationFrame(frame);
+    })();
+  });
+}
+
+
 function initProjectFilter() {
   const buttons   = document.querySelectorAll('.filter-btn');
   const projects  = document.querySelectorAll('#projects-container .card');
@@ -208,6 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCardStages();
   initProjectFilter();
   initSkillBars();
+  initShaderPreviews();
 
   // Only init Three.js scene if the hero canvas exists on this page
   if (document.getElementById('hero-canvas')) {

@@ -190,10 +190,52 @@
         </div>
       </div>
 
+      <!-- Shader 展示 -->
+      <div class="project-category">
+        <h3 class="project-category__title">Shader 展示</h3>
+        <div class="card-stage" data-index="0">
+          <button class="card-stage__btn card-stage__btn--prev" aria-label="上一张">&#8592;</button>
+          <div class="card-stage__viewport">
+            <div class="card-stage__track">
+              <article class="project-card">
+                <div class="project-card__thumb">
+                  <canvas data-shader="fresnel"></canvas>
+                </div>
+                <div class="project-card__body">
+                  <h4 class="project-card__title">菲涅尔边缘高光</h4>
+                  <p class="project-card__desc">实时 Fresnel 边缘光 Shader，模拟车机材质在不同视角下的光泽感。可封装为原子 Shader 节点持续复用，兼顾性能与视觉质量。</p>
+                  <div class="project-card__tags"><span>GLSL</span><span>Fresnel</span><span>HMI</span></div>
+                </div>
+              </article>
+              <article class="project-card">
+                <div class="project-card__thumb">
+                  <canvas data-shader="dissolve"></canvas>
+                </div>
+                <div class="project-card__body">
+                  <h4 class="project-card__title">FBM 噪声溶解特效</h4>
+                  <p class="project-card__desc">基于分形布朗运动（FBM）噪声的动态溶解效果，适用于抖音道具包特效制作，参数化控制溶解进度与边缘发光颜色。</p>
+                  <div class="project-card__tags"><span>GLSL</span><span>FBM 噪声</span><span>特效</span></div>
+                </div>
+              </article>
+              <article class="project-card">
+                <div class="project-card__thumb">
+                  <canvas data-shader="grid"></canvas>
+                </div>
+                <div class="project-card__body">
+                  <h4 class="project-card__title">程序化扫描线网格</h4>
+                  <p class="project-card__desc">无纹理全程序化生成扫描线网格，带透视深度衰减与双扫描线。适用于 HMI 科技感背景及 UI 过渡特效，零贴图开销。</p>
+                  <div class="project-card__tags"><span>GLSL</span><span>程序化</span><span>HMI</span></div>
+                </div>
+              </article>
+            </div>
+          </div>
+          <button class="card-stage__btn card-stage__btn--next" aria-label="下一张">&#8594;</button>
+          <div class="card-stage__dots"></div>
+        </div>
+      </div>
+
     </div>
   </section>
-
-  <!-- 核心技能 -->
   <section class="section skills">
     <div class="container">
       <h2 class="section__title">核心技能</h2>
