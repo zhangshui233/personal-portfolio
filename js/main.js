@@ -136,7 +136,8 @@ function initCardStages() {
 
     function goTo(idx) {
       current = Math.max(0, Math.min(idx, total - 1));
-      track.style.transform = `translateX(-${current * 100}%)`;
+      const viewportWidth = stage.querySelector('.card-stage__viewport').clientWidth;
+      track.style.transform = `translateX(-${current * viewportWidth}px)`;
       dots.forEach((d, i) => d.classList.toggle('card-stage__dot--active', i === current));
       btnPrev.disabled = current === 0;
       btnNext.disabled = current === total - 1;
@@ -144,6 +145,9 @@ function initCardStages() {
 
     btnPrev.addEventListener('click', () => goTo(current - 1));
     btnNext.addEventListener('click', () => goTo(current + 1));
+
+    // Recalculate offset on resize (e.g. screen rotation)
+    window.addEventListener('resize', () => goTo(current));
 
     // Touch swipe
     let touchStartX = 0;
