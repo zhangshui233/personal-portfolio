@@ -937,33 +937,17 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 }
 
 @media (max-width: 640px) {
-  /* 给 stage 留出两侧箭头的空间，保证所有分类 viewport 等宽 */
-  .card-stage {
-    flex-direction: row;
-    gap: 0;
-    padding-inline: 40px;
-  }
-
+  /* 手机端隐藏箭头，用滑动操作翻页 */
   .card-stage__btn {
-    position: absolute;
-    top: 80px;
-    transform: translateY(-50%);
-    z-index: 2;
-    width: 32px;
-    height: 32px;
-    font-size: 0.9rem;
-    background: rgba(10, 12, 16, 0.75);
+    display: none;
   }
 
-  .card-stage__btn--prev { left: 4px; }
-  .card-stage__btn--next { right: 4px; }
-
-  .card-stage__viewport {
-    width: 100%;
-    flex: 1;
+  /* viewport 撑满全宽，无需给箭头留空间 */
+  .card-stage {
+    gap: 0;
   }
 
-  .project-card__thumb { height: 160px; }
+  .project-card__thumb { height: 180px; }
 
   .project-card__body {
     padding: var(--space-sm) var(--space-md);
