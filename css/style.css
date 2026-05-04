@@ -937,15 +937,16 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 }
 
 @media (max-width: 640px) {
-  /* 箭头叠在卡片上，不占 viewport 宽度 */
+  /* 给 stage 留出两侧箭头的空间，保证所有分类 viewport 等宽 */
   .card-stage {
     flex-direction: row;
     gap: 0;
+    padding-inline: 40px;
   }
 
   .card-stage__btn {
     position: absolute;
-    top: 80px; /* 缩略图高度 160px 的一半 */
+    top: 80px;
     transform: translateY(-50%);
     z-index: 2;
     width: 32px;
@@ -954,19 +955,16 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
     background: rgba(10, 12, 16, 0.75);
   }
 
-  .card-stage__btn--prev { left: 8px; }
-  .card-stage__btn--next { right: 8px; }
+  .card-stage__btn--prev { left: 4px; }
+  .card-stage__btn--next { right: 4px; }
 
-  /* viewport 撑满全宽 */
   .card-stage__viewport {
     width: 100%;
     flex: 1;
   }
 
-  /* 缩略图高度降低，给文字留空间 */
   .project-card__thumb { height: 160px; }
 
-  /* 卡片文字稍微紧凑 */
   .project-card__body {
     padding: var(--space-sm) var(--space-md);
   }
