@@ -121,8 +121,8 @@ function initCardStages() {
     let current   = 0;
 
     if (total <= 1) {
-      btnPrev.style.display = 'none';
-      btnNext.style.display = 'none';
+      btnPrev.style.visibility = 'hidden';
+      btnNext.style.visibility = 'hidden';
     }
 
     // Build dots
