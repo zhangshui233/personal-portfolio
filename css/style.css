@@ -937,15 +937,15 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 }
 
 @media (max-width: 640px) {
-  /* 箭头改为绝对定位，不占 viewport 宽度 */
+  /* 箭头叠在卡片上，不占 viewport 宽度 */
   .card-stage {
-    flex-direction: column;
+    flex-direction: row;
     gap: 0;
   }
 
   .card-stage__btn {
     position: absolute;
-    top: calc(160px / 2);
+    top: 80px; /* 缩略图高度 160px 的一半 */
     transform: translateY(-50%);
     z-index: 2;
     width: 32px;
@@ -960,6 +960,7 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
   /* viewport 撑满全宽 */
   .card-stage__viewport {
     width: 100%;
+    flex: 1;
   }
 
   /* 缩略图高度降低，给文字留空间 */
