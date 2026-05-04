@@ -793,7 +793,7 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 .card-stage {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: var(--space-md);
 }
 
@@ -881,6 +881,7 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 /* Prev / Next arrow buttons */
 .card-stage__btn {
   flex-shrink: 0;
+  align-self: center;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -936,6 +937,41 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
 }
 
 @media (max-width: 640px) {
-  .card-stage__btn { width: 32px; height: 32px; font-size: 0.9rem; }
-  .project-card__thumb { height: 200px; }
+  /* 箭头改为绝对定位，不占 viewport 宽度 */
+  .card-stage {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .card-stage__btn {
+    position: absolute;
+    top: calc(160px / 2);
+    transform: translateY(-50%);
+    z-index: 2;
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+    background: rgba(10, 12, 16, 0.75);
+  }
+
+  .card-stage__btn--prev { left: 8px; }
+  .card-stage__btn--next { right: 8px; }
+
+  /* viewport 撑满全宽 */
+  .card-stage__viewport {
+    width: 100%;
+  }
+
+  /* 缩略图高度降低，给文字留空间 */
+  .project-card__thumb { height: 160px; }
+
+  /* 卡片文字稍微紧凑 */
+  .project-card__body {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .project-card__desc {
+    font-size: 0.8rem;
+    line-height: 1.6;
+  }
 }
